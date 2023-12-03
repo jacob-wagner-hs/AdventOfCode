@@ -50,7 +50,7 @@ const solve = (inputFile) => {
   const inputData = getInput(inputFile);
   const powerOfGame = sum(inputData.map(parseGame));
   console.log(powerOfGame);
-  //71036
+
   return powerOfGame;
 };
 
