@@ -23,10 +23,15 @@ const symbols = {
 
 const isSymbol = (value) => !!symbols[value];
 
-const lookForward = (row, x) => row.slice(x).match(/(?<!\.|\d)\d+/);
+const lookForward = (row, x) => {
+  const result = row.slice(x, x + 3).match(/(?<!\.|\d)\d+/);
+  if (result) {
+    return result[0];
+  }
+};
 const lookBackward = (row, x) => {
   const leadingMatches = row
-    .slice(0, x + 1)
+    .slice(x - 3, x + 1)
     .matchAll(/\d+[\*|=|-|\/|\+|\&|%|#|\@|\$]/g);
 
   const numsBeforeSymbols = [...leadingMatches];
@@ -54,19 +59,20 @@ const lookAboveOrBelow = (x, y, direction) => {
     for (let i = x - 1; i >= -1; i--) {
       if (yToSearch[i] === "." || !yToSearch[i]) {
         const xToUse = !yToSearch[i] ? 0 : i;
-        adjacentNumbers.push(yToSearch.slice(xToUse).match(/\d+/));
+        adjacentNumbers.push(yToSearch.slice(xToUse).match(/\d+/)[0]);
         break;
       }
     }
   }
   const center = yToSearch[x].match(/\d/);
   if (center && !left) {
-    adjacentNumbers.push(yToSearch.slice(x).match(/\d+/));
+    adjacentNumbers.push(yToSearch.slice(x).match(/\d+/)[0]);
   }
   const right = yToSearch[x + 1].match(/\d/);
   if (right && !center) {
-    adjacentNumbers.push(yToSearch.slice(x + 1).match(/\d+/));
+    adjacentNumbers.push(yToSearch.slice(x + 1).match(/\d+/)[0]);
   }
+
   return adjacentNumbers;
 };
 
@@ -77,7 +83,12 @@ const findAdjacentNumbers = (x, y) => {
   const below = lookAboveOrBelow(x, y, "below");
 
   const neighbours = [right, left, ...above, ...below];
-  return neighbours.filter((number) => number);
+  console.log(
+    neighbours.map((number) => parseInt(number)).filter((number) => number)
+  );
+  return neighbours
+    .map((number) => parseInt(number))
+    .filter((number) => number);
 };
 
 const solve = () => {
